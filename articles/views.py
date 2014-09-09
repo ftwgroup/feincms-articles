@@ -23,6 +23,7 @@ class ArticleDetail(AppContentMixin, DetailView):
 
 class ArticleList(AppContentMixin, ListView):
     model = Article
+    paginate_by = 10
 
     def get_queryset(self):
         return Article.objects.active()

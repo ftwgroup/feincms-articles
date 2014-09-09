@@ -12,10 +12,10 @@ class TempArticleIndex(indexes.SearchIndex):
     def get_model(self):
         return Article
 
-    def index_queryset(self):
+    def index_queryset(self, *args, **kwargs):
         return self.get_model().objects.active()
 
-    def get_updated_field(self, **kwargs):
+    def get_updated_field(self, *args, **kwargs):
         try:
             self.get_model()._meta.get_field('modification_date')
         except FieldDoesNotExist:
@@ -24,16 +24,9 @@ class TempArticleIndex(indexes.SearchIndex):
             return 'modification_date'
 
 
-try:
-    # In haystack < 2.0 we need to explicitly register indexes
-    from haystack import site
-except ImportError:
-    # In haystack >= 2.0 Indexes subclass indexes.Indexable
-    class ArticleIndex(TempArticleIndex, indexes.Indexable):
-        pass
-else:
-    class ArticleIndex(TempArticleIndex):
-        def get_queryset(self):
-            return self.index_queryset()
+# from haystack import site
+class ArticleIndex(TempArticleIndex, indexes.Indexable):
+    pass
 
-    site.register(Article, ArticleIndex)
+
+# site.register(Article, ArticleIndex)
